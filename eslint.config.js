@@ -20,15 +20,6 @@ export default defineConfig(
     },
   },
   {
-    files: ['src/**/*.ts'],
-    ignores: ['src/**/*.test-d.ts', 'src/**/*.test.ts'],
-    rules: {
-      // The public API uses `any` on purpose so `register` can return
-      // whatever configuration the host application expects.
-      '@typescript-eslint/no-explicit-any': 'off',
-    },
-  },
-  {
     // Require JSDoc on everything the package exports.
     files: ['src/**/*.ts'],
     ignores: ['src/**/*.test-d.ts', 'src/**/*.test.ts'],
