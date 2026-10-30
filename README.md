@@ -38,23 +38,43 @@ import type { Module } from '@armscye/module' with {
 import type { Module } from '@armscye/module';
 ```
 
-| Type     | Describes                                              |
-| -------- | ------------------------------------------------------ |
-| `Module` | `register()`, which returns the module's configuration |
+| Type        | Describes                                              |
+| ----------- | ------------------------------------------------------ |
+| `Module<T>` | `register()`, which returns the module's configuration |
 
-What `register` returns is up to the application that loads the module, so
-its return type is `any`. A module typically returns the providers it
-contributes:
+What `register` returns is up to the application that loads the module. The
+type parameter `T` states it and defaults to `unknown`, so a host must check
+the value before using it.
+
+A module typically returns the providers it contributes. With a type
+argument, `implements` checks that `register` returns that shape:
 
 ```ts
-class AppModule implements Module {
-  register() {
+import type { Provider } from '@armscye/container';
+
+interface AppModuleConfig {
+  providers: Provider[];
+}
+
+class AppModule implements Module<AppModuleConfig> {
+  register(): AppModuleConfig {
     return {
       providers: [{ provide: 'appName', useValue: 'My App' }],
     };
   }
 }
 ```
+
+A host that loads many modules names the keys it reads. Modules that return
+extra keys still fit:
+
+```ts
+function bootstrap(modules: Module<{ providers: Provider[] }>[]): Provider[] {
+  return modules.flatMap((m) => m.register().providers);
+}
+```
+
+`Module<any>` keeps the untyped behaviour of 0.5.0 and earlier.
 
 ## Contributing
 
